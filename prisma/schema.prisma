@@ -1,0 +1,47 @@
+generator client {
+  provider         = "prisma-client-js"
+  providerFeatures = ["fullTextSearch", "fullTextIndex"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+}
+
+model House {
+  id                  String    @id @default(uuid())
+  userId              String
+  title               String
+  description         String
+  image               String
+  country             String
+  county              String
+  city                String
+  locationDescription String
+  gym                 Boolean   @default(false)
+  spar                Boolean   @default(false)
+  bar                 Boolean   @default(false)
+  parking             Boolean   @default(false)
+  swimmingpool        Boolean   @default(false)
+  addedAt             DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  rooms               Room[]
+  bookings            Booking[]
+}
+
+model Room {
+  id       String    @id @default(uuid())
+  houseId  String
+  bookings Booking[]
+
+  house House @relation(fields: [houseId], references: [id])
+}
+
+model Booking {
+  id      String @id @default(uuid())
+  houseId String
+  roomId  String
+
+  house House @relation(fields: [houseId], references: [id])
+  room  Room  @relation(fields: [roomId], references: [id])
+}
