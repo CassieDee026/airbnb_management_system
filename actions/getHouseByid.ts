@@ -1,18 +1,23 @@
 import prismadb from "@/lib/prismadb";
 
-export const getHouseById = async (houseid: string) => {
-   try {
-     const House = await prismadb.house.findUnique({
-            where: {id: houseid},
-            include: {rooms: true},
-     });
-     if (!House) return null;
+export const getHouseById = async (houseid: string | null | undefined) => {
+  if (!houseid) {
+    throw new Error('The "houseid" argument must be provided and cannot be null or undefined.');
+  }
 
-     return House;
+  try {
+    const house = await prismadb.house.findUnique({
+      where: { id: houseid },
+      include: { rooms: true },
+    });
 
-   } 
-   catch (error) {
-      console.error("Error fetching house by ID:", error);
-      throw new Error('Failed to get house'); // Correctly throw a new Error
-   }
+    if (!house) {
+      throw new Error(`House with id ${houseid} not found.`);
+    }
+
+    return house;
+  } catch (error) {
+    console.error("Error fetching house by ID:", error);
+    throw new Error('Failed to get house');
+  }
 };

@@ -9,7 +9,8 @@ interface HousePageProps {
 }
 
 const HouseComponent = async ({ params }: HousePageProps) => {
-    const house = await getHouseById(params.houseid); // Fetch the house data
+    const resolvedParams = await params; // Await the params object
+    const house = await getHouseById(resolvedParams.houseid); // Fetch the house data
     const { userId } = await auth(); // Await the auth() call to get the userId
 
     if (!userId) return <div>Not authenticated....</div>;
