@@ -39,7 +39,7 @@ const formSchema = z.object({
   description: z.string().min(10, { message: 'Description must be at least 10 characters long' }),
   image: z.string().min(1, { message: 'Image is required' }),
   country: z.string().min(1, { message: 'Country is required' }),
-  state: z.string().min(1, { message: 'State is required' }),
+  county: z.string().min(1, { message: 'County is required' }),
   city: z.string().optional(),
   locationDescription: z.string().min(10, { message: 'Location description must be at least 10 characters long' }),
   gym: z.boolean().optional(),
@@ -68,7 +68,7 @@ const AddHouseForm = ({ house }: AddHouseFormProps) => {
       description: "",
       image: "",
       country: "",
-      state: "",
+      county: "",
       city: "",
       locationDescription: "",
       gym: false,
@@ -97,12 +97,12 @@ const AddHouseForm = ({ house }: AddHouseFormProps) => {
           const countryStates = getCountryStates(selectedCountry);
           setStates(countryStates || []);
           setCities([]); // Reset cities when country changes
-          form.setValue('state', ''); // Reset state when country changes
+          form.setValue('county', ''); // Reset state when country changes
           form.setValue('city', ''); // Reset city when country changes
         }
-      } else if (name === 'state') {
+      } else if (name === 'county') {
         const selectedCountry = form.getValues('country');
-        const selectedState = value.state;
+        const selectedState = value.county;
         if (selectedCountry && selectedState) {
           const stateCities = getStateCities(selectedCountry, selectedState);
           setCities(stateCities || []);
@@ -114,37 +114,45 @@ const AddHouseForm = ({ house }: AddHouseFormProps) => {
     return () => subscription.unsubscribe();
   }, [form, getCountryStates, getStateCities]);
 
+  
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-
     try {
       if (house) {
         // Update logic
-        await axios.put(`/api/house/${house.id}`, values);
+        axios.patch(`/api/house/${house.id}`, values).then(() => {
         toast({
-          variant: "success",
-          description: "House updated successfully"
+          variant: "success", 
+          description: 'House has been updated!'
         });
+        router.push(`/house/${house.id}`);
+        }).catch((err) =>{
+          console.log(err);
+          toast({
+            variant: "destructive",
+            description: "something went wrong"
+          })
+        })
       } else {
         // Create logic
         const res = await axios.post('/api/house', values);
         toast({
-          variant: "success",
-          description: "House created successfully"
+          variant: "success", // Corrected variant
+          description: 'House has been created!'
         });
         router.push(`/house/${res.data.id}`);
       }
     } catch (err) {
-      console.error(err);
+      console.log(err);
       toast({
         variant: "destructive",
-        description: "Something went wrong!"
+        description: 'Something went wrong!'
       });
     } finally {
       setIsLoading(false);
     }
   }
-
+  
   const handleImageDelete = (image: string) => {
     setImageIsDeleting(true);
     const imagekey = image.substring(image.lastIndexOf('/') + 1);
@@ -363,11 +371,11 @@ const AddHouseForm = ({ house }: AddHouseFormProps) => {
 
                 <FormField
                   control={form.control}
-                  name='state'
+                  name='county'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Select State</FormLabel>
-                      <FormDescription>In which state is your property located?</FormDescription>
+                      <FormLabel>Select County</FormLabel>
+                      <FormDescription>In which county is your property located?</FormDescription>
                       <Select
                         disabled={isLoading || states.length < 1}
                         onValueChange={(value) => field.onChange(value)}
@@ -375,7 +383,7 @@ const AddHouseForm = ({ house }: AddHouseFormProps) => {
                         defaultValue={field.value}
                       >
                         <SelectTrigger className="bg-background">
-                          <SelectValue defaultValue={field.value} placeholder="Select State" />
+                          <SelectValue defaultValue={field.value} placeholder="Select County" />
                         </SelectTrigger>
                         <SelectContent>
                           {states.map((state) => {
@@ -432,8 +440,7 @@ const AddHouseForm = ({ house }: AddHouseFormProps) => {
 
                 <div className='flex justify-between gap-2 flex-wrap'>
                   {house ? <Button className='max-w-[150px]' disabled={isLoading}> {isLoading ? <><Loader2 className='mr-2 h-4 w-4' />Updating</> : <><PencilLine
-                    className='mr-2 h-4 w-4' /> Update</>}</Button> : 
-                    <Button className='max-w-[150px]' disabled={isLoading}>
+                    className='mr-2 h-4 w-4' /> Update</>}</Button> : <Button className='max-w-[150px]' disabled={isLoading}>
                     {isLoading ? <><Loader2 className='mr-2 h-4 w-4' />Creating </> : <><Pencil className='mr-2 h-4 w-4' />
                       Create House</>}
                   </Button>}

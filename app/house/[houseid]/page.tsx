@@ -1,26 +1,24 @@
-import { getHouseById } from "@/actions/getHouseByid"; 
-import AddHouseForm from "@/components/house/AddHouseForm"; 
-import { auth } from '@clerk/nextjs/server';
+import { getHouseById } from "@/actions/getHouseByid";
+import AddHouseForm from "@/components/house/AddHouseForm";
+import { auth } from "@clerk/nextjs/server";
+
 
 interface HousePageProps {
-    params: {
-        houseid: string;
-    };
+  params: {
+    houseid: string;
+  };
 }
 
-const HouseComponent = async ({ params }: HousePageProps) => {
-    const resolvedParams = await params; // Await the params object
-    const house = await getHouseById(resolvedParams.houseid); // Fetch the house data
-    const { userId } = await auth(); // Await the auth() call to get the userId
+const House = async ({ params }: HousePageProps) => {
+  const house = await getHouseById(params.houseid);
+  const { userId } = await auth();
 
-    if (!userId) return <div>Not authenticated....</div>;
-    if (house && house.userId !== userId) return <div>Access Denied</div>; 
+  if (!userId) return<div> Not authourized.......</div>
 
-    return (
-        <div>
-            <AddHouseForm house={house}/>
-        </div>
-    );
-};
+  if (house && house.userId !== userId) return <div>Access Denied......</div>
 
-export default HouseComponent;
+  return(<div>
+    <AddHouseForm house={house}/>
+  </div>);
+}
+export default House;

@@ -1,26 +1,24 @@
-import { auth } from "@clerk/nextjs";
-import {NextResponse} from "next/server";
-import prismadb from "@lib/prismadb";
+import prismadb from '@/lib/prismadb';
+import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
+
 
 export async function POST(req: Request) {
-    try {
+    try{
         const body = await req.json();
-        const { userId } = auth();
-
+        const { userId } = await auth();
         if (!userId) {
-            return new NextResponse('Unauthorized', { status: 401 });
+            return new NextResponse("Unauthorized", { status: 403 });
         }
-
-        const house = await prismadb.house.create({
+        const House = await prismadb.house.create({
             data: {
-                ...body,
-                userId
-            }
+                 ...body,
+                userId,
+            },
         });
-
-        return NextResponse.json(house);
+        return NextResponse.json(House);
     } catch (error) {
-        console.error('Error at /api/house POST', error);
-        return new NextResponse('Internal Server Error', { status: 500 });
+        console.log("Errror at /api/house POST", error);
+        return new NextResponse("Internal Server Error", { status: 500 });
     }
 }
