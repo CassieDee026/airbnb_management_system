@@ -12,8 +12,10 @@ export default withUt({
   theme: {
     extend: {
       colors: {
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
+        background: {  // Add DEFAULT here
+          DEFAULT: 'hsl(var(--background))',
+        },
+        foreground: 'hsl(var(--foreground))', // Add DEFAULT here if you intend to use text-foreground
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
@@ -42,9 +44,11 @@ export default withUt({
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
         },
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
+        border: { // Add DEFAULT here
+          DEFAULT: 'hsl(var(--border))',
+        },
+        input: 'hsl(var(--input))', // Add DEFAULT here if you intend to use utility classes with it
+        ring: 'hsl(var(--ring))',  // Add DEFAULT here if you intend to use utility classes with it
         chart: {
           '1': 'hsl(var(--chart-1))',
           '2': 'hsl(var(--chart-2))',
