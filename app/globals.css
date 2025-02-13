@@ -63,13 +63,3 @@ body {
     --chart-5: 340 75% 55%;
   }
 }
-
-/* Apply Tailwind styles to the body and all elements */
-@layer base {
-  * {
-    @apply border-border; /* Apply border color to all elements */
-  }
-  body {
-    @apply bg-background text-foreground; /* Set background and text color */
-  }
-}
