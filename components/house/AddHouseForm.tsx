@@ -120,7 +120,7 @@ const AddHouseForm = ({ house }: AddHouseFormProps) => {
     try {
       if (house) {
         // Update logic
-        axios.patch(`/api/house/${house.id}`, values).then(() => {
+        axios.put(`/api/house/${house.id}`, values).then(() => {
         toast({
           variant: "success", 
           description: 'House has been updated!'
